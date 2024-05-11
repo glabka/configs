@@ -114,4 +114,4 @@ fi
 # my part
 [[ -z "$TMUX" ]] && exec tmux
 
-
+alias beep='aplay /usr/share/sounds/alsa/Front_Center.wav'
