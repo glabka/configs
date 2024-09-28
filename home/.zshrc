@@ -156,3 +156,4 @@ bindkey "^[[1;5D" backward-word
 bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
 
+tmux
