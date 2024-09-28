@@ -149,6 +149,9 @@ alias ll='eza --icons=always --color=always -la'
 $HOME/.local/bin/colorscript -r
 
 # My part
+# vim mode
+bindkey -v
+
 bindkey '^ ' autosuggest-accept
 bindkey '^I' complete-word
 bindkey "^[[1;5C" forward-word
