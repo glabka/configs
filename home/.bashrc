@@ -1,4 +1,4 @@
-# If not running interactively, don't do anything
+
 case $- in
     *i*) ;;
       *) return;;
@@ -114,18 +114,28 @@ fi
 # My part
 ## vi mode
 set -o vi
-## Colors 
+## history format
+export HISTTIMEFORMAT="%F %T"
+# Throw it all together 
+
 export color_prompt=yes
 RED='\['"$(tput setaf 1)"'\]' # \e[31m
+GREEN='\['"$(tput setaf 2)"'\]' # \e[32m
 BLUE='\['"$(tput setaf 4)"'\]' # \e[34m
 CYAN='\['"$(tput setaf 6)"'\]' # \e[36m
 NC='\['"$(tput sgr0)"'\]'   # \e[0m
+FROWNY="${RED}:(${NC}"
+SMILEY="${GREEN}:)${NC}"
 
 parse_git_branch() {
  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
+
+SELECT="if [ \$? = 0 ]; then echo \"${SMILEY}\"; else echo \"${FROWNY}\"; fi"
+
 if [ "$color_prompt" = yes ]; then
- PS1="${debian_chroot:+($debian_chroot)}${CYAN}\u@\h${NC}:${BLUE}\w${NC} ${RED}"'$(parse_git_branch)'"${NC}\$"
+ PS1="${debian_chroot:+($debian_chroot)}${CYAN}\u@\h${NC}:${BLUE}\w${NC} ${RED}\`parse_git_branch\`${NC} \`${SELECT}\`$"
+
 else
  PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(parse_git_branch)\$ '
 fi
