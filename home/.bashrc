@@ -111,7 +111,25 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# my part
-[[ -z "$TMUX" ]] && exec tmux
+# My part
+## Colors 
+export color_prompt=yes
+RED='\['"$(tput setaf 1)"'\]' # \e[31m
+BLUE='\['"$(tput setaf 4)"'\]' # \e[34m
+CYAN='\['"$(tput setaf 6)"'\]' # \e[36m
+NC='\['"$(tput sgr0)"'\]'   # \e[0m
+
+parse_git_branch() {
+ git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+if [ "$color_prompt" = yes ]; then
+ PS1="${debian_chroot:+($debian_chroot)}${CYAN}\u@\h${NC}:${BLUE}\w${NC} ${RED}"'$(parse_git_branch)'"${NC}\$"
+else
+ PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(parse_git_branch)\$ '
+fi
+## aliases
 
 alias beep='aplay /usr/share/sounds/alsa/Front_Center.wav'
+
+# tmux
+[[ -z "$TMUX" ]] && exec tmux
