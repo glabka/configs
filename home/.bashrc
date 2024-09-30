@@ -112,6 +112,8 @@ if ! shopt -oq posix; then
 fi
 
 # My part
+## vi mode
+set -o vi
 ## Colors 
 export color_prompt=yes
 RED='\['"$(tput setaf 1)"'\]' # \e[31m
@@ -127,6 +129,7 @@ if [ "$color_prompt" = yes ]; then
 else
  PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(parse_git_branch)\$ '
 fi
+
 ## aliases
 
 alias beep='aplay /usr/share/sounds/alsa/Front_Center.wav'
