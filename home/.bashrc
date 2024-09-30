@@ -118,26 +118,25 @@ set -o vi
 export HISTTIMEFORMAT="%F %T"
 # Throw it all together 
 
-export color_prompt=yes
+color_prompt=yes
 RED='\['"$(tput setaf 1)"'\]' # \e[31m
 GREEN='\['"$(tput setaf 2)"'\]' # \e[32m
 BLUE='\['"$(tput setaf 4)"'\]' # \e[34m
 CYAN='\['"$(tput setaf 6)"'\]' # \e[36m
+YELLOW='\['"$(tput setaf 3)"'\]' # \e[33m
 NC='\['"$(tput sgr0)"'\]'   # \e[0m
+NORMAL="\[\033[0m\]"
 FROWNY="${RED}:(${NC}"
 SMILEY="${GREEN}:)${NC}"
 
-parse_git_branch() {
- git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
 
-SELECT="if [ \$? = 0 ]; then echo \"${SMILEY}\"; else echo \"${FROWNY}\"; fi"
 
 if [ "$color_prompt" = yes ]; then
- PS1="${debian_chroot:+($debian_chroot)}${CYAN}\u@\h${NC}:${BLUE}\w${NC} ${RED}\`parse_git_branch\`${NC} \`${SELECT}\`$"
-
+ SELECT="if [ \$? = 0 ]; then echo \"${SMILEY}\"; else echo \"${FROWNY}\"; fi"
+ PS1="${debian_chroot:+($debian_chroot)}${CYAN}\u@\h${NC}:${BLUE}\w${NC}${YELLOW}\`__git_ps1\`${NC}|\`${SELECT}\`$"
 else
- PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(parse_git_branch)\$ '
+ SELECT="if [ \$? = 0 ]; then echo \":)\"; else echo \":(\"; fi"
+ PS1="${debian_chroot:+($debian_chroot)}\u@\h:\w\`__git_ps1\`|\`${SELECT}\`$"
 fi
 
 ## aliases
