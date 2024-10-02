@@ -1,7 +1,15 @@
-#  ╔═╗╔═╗╦ ╦╦═╗╔═╗  ╔═╗╔═╗╔╗╔╔═╗╦╔═╗	- z0mbi3
+
 #  ╔═╝╚═╗╠═╣╠╦╝║    ║  ║ ║║║║╠╣ ║║ ╦	- https://github.com/gh0stzk/dotfiles
 #  ╚═╝╚═╝╩ ╩╩╚═╚═╝  ╚═╝╚═╝╝╚╝╚  ╩╚═╝	- My zsh conf
 
+# My part tmux
+### tmux
+#if which tmux >/dev/null 2>&1; then
+#    #if not inside a tmux session, and if no session is started, start a new session
+#    test -z "$TMUX" && (tmux attach || tmux new-session)
+#fi
+
+# NOT MY PART
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -98,55 +106,92 @@ PS1='%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_i
 #  ┌─┐┬  ┬ ┬┌─┐┬┌┐┌┌─┐
 #  ├─┘│  │ ││ ┬││││└─┐
 #  ┴  ┴─┘└─┘└─┘┴┘└┘└─┘
-# source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-# source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-bindkey '^[[3~' delete-char
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh - not in universe
 
 #  ┌─┐┬ ┬┌─┐┌┐┌┌─┐┌─┐  ┌┬┐┌─┐┬─┐┌┬┐┬┌┐┌┌─┐┬  ┌─┐  ┌┬┐┬┌┬┐┬  ┌─┐
 #  │  ├─┤├─┤││││ ┬├┤    │ ├┤ ├┬┘│││││││├─┤│  └─┐   │ │ │ │  ├┤
 #  └─┘┴ ┴┴ ┴┘└┘└─┘└─┘   ┴ └─┘┴└─┴ ┴┴┘└┘┴ ┴┴─┘└─┘   ┴ ┴ ┴ ┴─┘└─┘
-function xterm_title_precmd () {
-	print -Pn -- '\e]2;%n@%m %~\a'
-	[[ "$TERM" == 'screen'* ]] && print -Pn -- '\e_\005{g}%n\005{-}@\005{m}%m\005{-} \005{B}%~\005{-}\e\\'
-}
-
-function xterm_title_preexec () {
-	print -Pn -- '\e]2;%n@%m %~ %# ' && print -n -- "${(q)1}\a"
-	[[ "$TERM" == 'screen'* ]] && { print -Pn -- '\e_\005{g}%n\005{-}@\005{m}%m\005{-} \005{B}%~\005{-} %# ' && print -n -- "${(q)1}\e\\"; }
-}
-
-if [[ "$TERM" == (kitty*|alacritty*|tmux*|screen*|xterm*) ]]; then
-	add-zsh-hook -Uz precmd xterm_title_precmd
-	add-zsh-hook -Uz preexec xterm_title_preexec
-fi
+#function xterm_title_precmd () {
+#	print -Pn -- '\e]2;%n@%m %~\a'
+#	[[ "$TERM" == 'screen'* ]] && print -Pn -- '\e_\005{g}%n\005{-}@\005{m}%m\005{-} \005{B}%~\005{-}\e\\'
+#}
+#
+#function xterm_title_preexec () {
+#	print -Pn -- '\e]2;%n@%m %~ %# ' && print -n -- "${(q)1}\a"
+#	[[ "$TERM" == 'screen'* ]] && { print -Pn -- '\e_\005{g}%n\005{-}@\005{m}%m\005{-} \005{B}%~\005{-} %# ' && print -n -- "${(q)1}\e\\"; }
+#}
+#
+#if [[ "$TERM" == (xterm-kitty|kitty*|alacritty*|tmux*|screen*|xterm*) ]]; then
+#	add-zsh-hook -Uz precmd xterm_title_precmd
+#	add-zsh-hook -Uz preexec xterm_title_preexec
+#fi
 
 #  ┌─┐┬  ┬┌─┐┌─┐
 #  ├─┤│  │├─┤└─┐
 #  ┴ ┴┴─┘┴┴ ┴└─┘
-alias mirrors="sudo reflector --verbose --latest 5 --country 'United States' --age 6 --sort rate --save /etc/pacman.d/mirrorlist"
-alias update="paru -Syu --nocombinedupgrade"
-alias grub-update="sudo grub-mkconfig -o /boot/grub/grub.cfg"
-
-alias music="ncmpcpp"
-
-alias cat="bat --theme=base16"
+alias bat="batcat --theme=base16"
 alias ls='ls --color'
-# alias ls='eza --icons=always --color=always -a'
-# alias ll='eza --icons=always --color=always -la'
+alias ls='eza --icons=always --color=always -a'
+alias ll='eza --icons=always --color=always -la'
 
 #  ┌─┐┬ ┬┌┬┐┌─┐  ┌─┐┌┬┐┌─┐┬─┐┌┬┐
 #  ├─┤│ │ │ │ │  └─┐ │ ├─┤├┬┘ │
 #  ┴ ┴└─┘ ┴ └─┘  └─┘ ┴ ┴ ┴┴└─ ┴
 # $HOME/.local/bin/colorscript -r
-
 # My part
-# vim mode
+# vim mode + idicator
 bindkey -v
+### TODO - active vi mode indicator to the right - https://www.reddit.com/r/vim/comments/akc9dk/a_more_native_look_for_zsh_vimode/ - it's working just without tmux
+# ----------------------
+# Dependencies for the following lines
+#zmodload zsh/zle
+#autoload -U colors && colorsim
+# Will have no effect if you don't use pure as your ZSH theme
+# export PURE_PROMPT_SYMBOL="[I] ❯"
+#export PURE_PROMPT_VICMD_SYMBOL="%{$fg[green]%}[N] ❮%{$reset_color%}"
 
+# By default, we have insert mode shown on right hand side
+export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
+
+# And also a beam as the cursor
+#echo -ne '\e[5 q'
+
+# Callback for vim mode change
+function zle-keymap-select () {
+    # Only supported in these terminals
+
+    if [ "$TERM" = "tmux-256color" ] || [ "$TERM" = "xterm-256color" ] || [ "$TERM" = "xterm-kitty" ] || [ "$TERM" = "screen-256color" ]; then
+        if [ $KEYMAP = vicmd ]; then
+            # Command mode
+            export RPROMPT="%B%F{green}[NORMAL]%f%b%}"
+
+
+            # Set block cursor
+            #echo -ne '\e[1 q'
+        else
+            # Insert mode
+            export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
+
+            # Set beam cursor
+            #echo -ne '\e[5 q'
+        fi
+    fi
+    #zle redisplay
+    zle reset-prompt
+    #if typeset -f prompt_pure_update_vim_prompt_widget > /dev/null; then
+    #    # Refresh prompt and call Pure super function
+    #    prompt_pure_update_vim_prompt_widget
+    #fi
+}
+
+# Bind the callback
+zle -N zle-keymap-select
+
+# Reduce latency when pressing <Esc>
+ export KEYTIMEOUT=1
+# ----------------------
 ## bindings
 bindkey '^ ' autosuggest-accept
 bindkey '^I' complete-word
@@ -154,6 +199,7 @@ bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
+bindkey '^R' history-incremental-search-backward
 
 ## extract
 extract () {
@@ -176,6 +222,4 @@ extract () {
        echo "'$1' is not a valid file!"
    fi
  }
-
-## tmux
 [[ -z "$TMUX" ]] && exec tmux
