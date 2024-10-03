@@ -156,7 +156,7 @@ bindkey -v
 export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
 
 # And also a beam as the cursor
-#echo -ne '\e[5 q'
+echo -ne '\e[5 q'
 
 # Callback for vim mode change
 function zle-keymap-select () {
@@ -169,13 +169,13 @@ function zle-keymap-select () {
 
 
             # Set block cursor
-            #echo -ne '\e[1 q'
+            echo -ne '\e[1 q'
         else
             # Insert mode
             export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
 
             # Set beam cursor
-            #echo -ne '\e[5 q'
+            echo -ne '\e[5 q'
         fi
     fi
     #zle redisplay
