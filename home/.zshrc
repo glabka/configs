@@ -191,15 +191,31 @@ extract () {
 
 # --------------------
 ## beep for long commands
+function check_command_prefix() {
+    local input_string="$1"
+    shift
+    local ignored_commands=("nvim" "vim" "vi" "ssh" "intellij-idea" "firefox")
+
+    for cmd in "${ignored_commands[@]}"; do
+        if [[ "$input_string" == "$cmd "* || "$input_string" == "$cmd" ]]; then
+            return 0  # Return success if it matches
+        fi
+    done
+
+    return 1  # Return failure if no match found
+}
+
 preexec () {
     # Note the date when the command started, in unix time.
     CMD_START_DATE=$(date +%s)
     # Store the command that we're running.
     CMD_NAME=$1
 }
+
 precmd () {
-    # Proceed only if we've ran a command in the current shell.
-    if ! [[ -z $CMD_START_DATE ]]; then
+    # Proceed only if we've run a command in the current shell.
+    echo "$CMD_NAME"
+    if ! [[ -z $CMD_START_DATE ]] && ! check_command_prefix "$CMD_NAME"; then
         # Note current date in unix time
         CMD_END_DATE=$(date +%s)
         # Store the difference between the last command start date vs. current date.
