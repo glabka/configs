@@ -1,15 +1,3 @@
-
-#  ╔═╝╚═╗╠═╣╠╦╝║    ║  ║ ║║║║╠╣ ║║ ╦	- https://github.com/gh0stzk/dotfiles
-#  ╚═╝╚═╝╩ ╩╩╚═╚═╝  ╚═╝╚═╝╝╚╝╚  ╩╚═╝	- My zsh conf
-
-# My part tmux
-### tmux
-#if which tmux >/dev/null 2>&1; then
-#    #if not inside a tmux session, and if no session is started, start a new session
-#    test -z "$TMUX" && (tmux attach || tmux new-session)
-#fi
-
-# NOT MY PART
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -125,16 +113,7 @@ alias ll='eza --icons=always --color=always -la'
 
 # vim mode + idicator
 bindkey -v
-### TODO - active vi mode indicator to the right - https://www.reddit.com/r/vim/comments/akc9dk/a_more_native_look_for_zsh_vimode/ - it's working just without tmux
-# ----------------------
-# Dependencies for the following lines
-#zmodload zsh/zle
-#autoload -U colors && colorsim
-# Will have no effect if you don't use pure as your ZSH theme
-# export PURE_PROMPT_SYMBOL="[I] ❯"
-#export PURE_PROMPT_VICMD_SYMBOL="%{$fg[green]%}[N] ❮%{$reset_color%}"
-
-# By default, we have insert mode shown on right hand side
+## By default, we have insert mode shown on right hand side
 export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
 
 # And also a beam as the cursor
