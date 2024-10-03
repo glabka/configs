@@ -160,12 +160,7 @@ function zle-keymap-select () {
             echo -ne '\e[5 q'
         fi
     fi
-    #zle redisplay
     zle reset-prompt
-    #if typeset -f prompt_pure_update_vim_prompt_widget > /dev/null; then
-    #    # Refresh prompt and call Pure super function
-    #    prompt_pure_update_vim_prompt_widget
-    #fi
 }
 
 # Bind the callback
