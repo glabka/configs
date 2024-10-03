@@ -1,5 +1,29 @@
+# __________________________________________________
+#/                                                  \
+#|                       dP                         |
+#|                       88                         |
+#|     d888888b .d8888b. 88d888b. 88d888b. .d8888b. |
+#|        .d8P' Y8ooooo. 88'  `88 88'  `88 88'  `"" |
+#|  dP  .Y8P          88 88    88 88       88.  ... |
+#|  88 d888888P `88888P' dP    dP dP       `88888P' |
+#|                                                  |
+#|                                                  |
+#\                                                  /
+# --------------------------------------------------
+#    \
+#     \
+#         .--.
+#        |o_o |
+#        |:_/ |
+#       //   \ \
+#      (|     | )
+#     /'\_   _/`\
+#     \___)=(___/
+
+# note filget fonts used are nancyj and "Calvin S"
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
 
 #  ┬  ┬┌─┐┬─┐┌─┐
 #  └┐┌┘├─┤├┬┘└─┐
@@ -105,13 +129,10 @@ alias ls='ls --color'
 alias ls='eza --icons=always --color=always -a'
 alias ll='eza --icons=always --color=always -la'
 
-# __  ____   __  ____   _    ____ _____
-#|  \/  \ \ / / |  _ \ / \  |  _ \_   _|
-#| |\/| |\ V /  | |_) / _ \ | |_) || |
-#| |  | | | |   |  __/ ___ \|  _ < | |
-#|_|  |_| |_|   |_| /_/   \_\_| \_\|_|
 
-# vim mode + idicator
+#  ┬  ┬┬┌┬┐  ┌┬┐┌─┐┌┬┐┌─┐  ┬ ┬┬┌┬┐┬ ┬  ┬┌┐┌┌┬┐┬┌─┐┌─┐┌┬┐┌─┐┬─┐
+#  └┐┌┘││││  ││││ │ ││├┤   ││││ │ ├─┤  ││││ ││││  ├─┤ │ │ │├┬┘
+#   └┘ ┴┴ ┴  ┴ ┴└─┘─┴┘└─┘  └┴┘┴ ┴ ┴ ┴  ┴┘└┘─┴┘┴└─┘┴ ┴ ┴ └─┘┴└─
 bindkey -v
 ## By default, we have insert mode shown on right hand side
 export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
@@ -152,8 +173,10 @@ zle -N zle-keymap-select
 
 # Reduce latency when pressing <Esc>
  export KEYTIMEOUT=1
-# ----------------------
-## bindings
+ 
+#  ┌┬┐┬ ┬  ┌┐ ┬┌┐┌┌┬┐┬┌┐┌┌─┐┌─┐
+#  │││└┬┘  ├┴┐││││ │││││││ ┬└─┐
+#  ┴ ┴ ┴   └─┘┴┘└┘─┴┘┴┘└┘└─┘└─┘
 bindkey '^ ' autosuggest-accept
 #bindkey '^I' complete-word
 bindkey '^I'         menu-complete
@@ -164,7 +187,9 @@ bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
 bindkey '^R' history-incremental-search-backward
 
-## extract
+#  ┌─┐─┐ ┬┌┬┐┬─┐┌─┐┌─┐┌┬┐
+#  ├┤ ┌┴┬┘ │ ├┬┘├─┤│   │
+#  └─┘┴ └─ ┴ ┴└─┴ ┴└─┘ ┴
 extract () {
    if [ -f $1 ] ; then
        case $1 in
@@ -186,11 +211,14 @@ extract () {
    fi
  }
  
-## tmux
+#  ┌┬┐┌┬┐┬ ┬─┐ ┬
+#   │ ││││ │┌┴┬┘
+#   ┴ ┴ ┴└─┘┴ └─
 [[ -z "$TMUX" ]] && exec tmux
 
-# --------------------
-## beep for long commands
+#  ┬  ┌─┐┌┐┌┌─┐  ┌─┐┌─┐┌┬┐┌┬┐┌─┐┌┐┌┌┬┐┌─┐  ┌┐ ┌─┐┌─┐┌─┐
+#  │  │ │││││ ┬  │  │ │││││││├─┤│││ ││└─┐  ├┴┐├┤ ├┤ ├─┘
+#  ┴─┘└─┘┘└┘└─┘  └─┘└─┘┴ ┴┴ ┴┴ ┴┘└┘─┴┘└─┘  └─┘└─┘└─┘┴
 function check_command_prefix() {
     local input_string="$1"
     shift
@@ -231,4 +259,4 @@ precmd () {
         fi
     fi
 }
-# --------------------
+
