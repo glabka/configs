@@ -237,7 +237,6 @@ preexec () {
 
 precmd () {
     # Proceed only if we've run a command in the current shell.
-    echo "$CMD_NAME"
     if ! [[ -z $CMD_START_DATE ]] && ! check_command_prefix "$CMD_NAME"; then
         # Note current date in unix time
         CMD_END_DATE=$(date +%s)
