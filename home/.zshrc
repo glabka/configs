@@ -86,7 +86,7 @@ setopt hist_find_no_dups
 setopt AUTOCD              # change directory just by typing its name
 setopt PROMPT_SUBST        # enable command substitution in prompt
 setopt MENU_COMPLETE       # Automatically highlight first element of completion menu
-setopt LIST_PACKED		   # The completion menu takes less space.
+setopt LIST_PACKED	   # The completion menu takes less space.
 setopt AUTO_LIST           # Automatically list choices on ambiguous completion.
 setopt COMPLETE_IN_WORD    # Complete from both ends of a word.
 
@@ -108,25 +108,6 @@ PS1='%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_i
 #  ┴  ┴─┘└─┘└─┘┴┘└┘└─┘
 source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh - not in universe
-
-#  ┌─┐┬ ┬┌─┐┌┐┌┌─┐┌─┐  ┌┬┐┌─┐┬─┐┌┬┐┬┌┐┌┌─┐┬  ┌─┐  ┌┬┐┬┌┬┐┬  ┌─┐
-#  │  ├─┤├─┤││││ ┬├┤    │ ├┤ ├┬┘│││││││├─┤│  └─┐   │ │ │ │  ├┤
-#  └─┘┴ ┴┴ ┴┘└┘└─┘└─┘   ┴ └─┘┴└─┴ ┴┴┘└┘┴ ┴┴─┘└─┘   ┴ ┴ ┴ ┴─┘└─┘
-#function xterm_title_precmd () {
-#	print -Pn -- '\e]2;%n@%m %~\a'
-#	[[ "$TERM" == 'screen'* ]] && print -Pn -- '\e_\005{g}%n\005{-}@\005{m}%m\005{-} \005{B}%~\005{-}\e\\'
-#}
-#
-#function xterm_title_preexec () {
-#	print -Pn -- '\e]2;%n@%m %~ %# ' && print -n -- "${(q)1}\a"
-#	[[ "$TERM" == 'screen'* ]] && { print -Pn -- '\e_\005{g}%n\005{-}@\005{m}%m\005{-} \005{B}%~\005{-} %# ' && print -n -- "${(q)1}\e\\"; }
-#}
-#
-#if [[ "$TERM" == (xterm-kitty|kitty*|alacritty*|tmux*|screen*|xterm*) ]]; then
-#	add-zsh-hook -Uz precmd xterm_title_precmd
-#	add-zsh-hook -Uz preexec xterm_title_preexec
-#fi
 
 #  ┌─┐┬  ┬┌─┐┌─┐
 #  ├─┤│  │├─┤└─┐
@@ -136,11 +117,12 @@ alias ls='ls --color'
 alias ls='eza --icons=always --color=always -a'
 alias ll='eza --icons=always --color=always -la'
 
-#  ┌─┐┬ ┬┌┬┐┌─┐  ┌─┐┌┬┐┌─┐┬─┐┌┬┐
-#  ├─┤│ │ │ │ │  └─┐ │ ├─┤├┬┘ │
-#  ┴ ┴└─┘ ┴ └─┘  └─┘ ┴ ┴ ┴┴└─ ┴
-# $HOME/.local/bin/colorscript -r
-# My part
+# __  ____   __  ____   _    ____ _____
+#|  \/  \ \ / / |  _ \ / \  |  _ \_   _|
+#| |\/| |\ V /  | |_) / _ \ | |_) || |
+#| |  | | | |   |  __/ ___ \|  _ < | |
+#|_|  |_| |_|   |_| /_/   \_\_| \_\|_|
+
 # vim mode + idicator
 bindkey -v
 ### TODO - active vi mode indicator to the right - https://www.reddit.com/r/vim/comments/akc9dk/a_more_native_look_for_zsh_vimode/ - it's working just without tmux
@@ -194,7 +176,9 @@ zle -N zle-keymap-select
 # ----------------------
 ## bindings
 bindkey '^ ' autosuggest-accept
-bindkey '^I' complete-word
+#bindkey '^I' complete-word
+bindkey '^I'         menu-complete
+bindkey "$terminfo[kcbt]" reverse-menu-complete
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 bindkey '^H' backward-kill-word
@@ -222,4 +206,34 @@ extract () {
        echo "'$1' is not a valid file!"
    fi
  }
+ 
+## tmux
 [[ -z "$TMUX" ]] && exec tmux
+
+# --------------------
+## beep for long commands
+preexec () {
+    # Note the date when the command started, in unix time.
+    CMD_START_DATE=$(date +%s)
+    # Store the command that we're running.
+    CMD_NAME=$1
+}
+precmd () {
+    # Proceed only if we've ran a command in the current shell.
+    if ! [[ -z $CMD_START_DATE ]]; then
+        # Note current date in unix time
+        CMD_END_DATE=$(date +%s)
+        # Store the difference between the last command start date vs. current date.
+        CMD_ELAPSED_TIME=$(($CMD_END_DATE - $CMD_START_DATE))
+        # Store an arbitrary threshold, in seconds.
+        CMD_NOTIFY_THRESHOLD=60
+
+        if [[ $CMD_ELAPSED_TIME -gt $CMD_NOTIFY_THRESHOLD ]]; then
+            # Beep or visual bell if the elapsed time (in seconds) is greater than threshold
+            print -n '\a'
+            # Send a notification
+            notify-send 'Job finished' "The job \"$CMD_NAME\" has finished."
+        fi
+    fi
+}
+# --------------------
