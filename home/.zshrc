@@ -53,7 +53,6 @@ compinit -C -d ~/.config/zsh/zcompdump
 
 autoload -Uz add-zsh-hook
 autoload -Uz vcs_info
-precmd () { vcs_info }
 _comp_options+=(globdots)
 
 zstyle ':completion:*' verbose true
@@ -108,6 +107,7 @@ setopt COMPLETE_IN_WORD    # Complete from both ends of a word.
 #  ┌┬┐┬ ┬┌─┐  ┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐
 #   │ ├─┤├┤   ├─┘├┬┘│ ││││├─┘ │
 #   ┴ ┴ ┴└─┘  ┴  ┴└─└─┘┴ ┴┴   ┴
+
 function dir_icon {
   if [[ "$PWD" == "$HOME" ]]; then
     echo "%B%F{cyan}%f%b"
@@ -116,7 +116,20 @@ function dir_icon {
   fi
 }
 #󰕈
-PS1='%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %(?.%B%F{green}.%F{red})%f%b '
+PS1="%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %B%F{grey}[0]%f%b%B%F{blue}%f%b"
+
+function update_prompt() {
+    local exit_code=$?
+    local exit_color
+    if [[ $exit_code -eq 0 ]]; then
+        exit_color="%F{green}"  # Green for zero exit code
+    else
+        exit_color="%F{red}"    # Red for nonzero exit code
+    fi
+    export LAST_COMMAND_INDICATOR="${exit_color}[${exit_code}]"
+    export PS1="%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F{blue}%f%b"
+}
+add-zsh-hook precmd update_prompt
 
 #  ┌─┐┬  ┬ ┬┌─┐┬┌┐┌┌─┐
 #  ├─┘│  │ ││ ┬││││└─┐
@@ -143,30 +156,39 @@ export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
 # And also a beam as the cursor
 echo -ne '\e[5 q'
 
+
 # Callback for vim mode change
 function zle-keymap-select () {
-    # Only supported in these terminals
+    local exit_code=${LAST_COMMAND_EXIT_VAL}
+    local mode_color="%F{white}"
 
-    if [ "$TERM" = "tmux-256color" ] || [ "$TERM" = "xterm-256color" ] || [ "$TERM" = "xterm-kitty" ] || [ "$TERM" = "screen-256color" ]; then
-        if [ $KEYMAP = vicmd ]; then
+
+    # Vim indicator: only supported in these terminals
+    if [[ "$TERM" == "tmux-256color" || "$TERM" == "xterm-256color" || "$TERM" == "xterm-kitty" || "$TERM" == "screen-256color" ]]; then
+        if [[ $KEYMAP == "vicmd" ]]; then
             # Command mode
-            export RPROMPT="%B%F{green}[NORMAL]%f%b%}"
-
+            mode_color="%F{green}"  # Green for normal mode
+            export RPROMPT="%B${mode_color}[NORMAL]%f%b"
 
             # Set block cursor
             echo -ne '\e[1 q'
         else
             # Insert mode
-            export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
+            mode_color="%F{blue}"  # Blue for insert mode
+            export RPROMPT="%B${mode_color}[INSERT]%f%b"
 
             # Set beam cursor
             echo -ne '\e[5 q'
         fi
     fi
+
+    # Update PS1 with exit code and mode color
+    export PS1="%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B${mode_color}%f%b"
+
     zle reset-prompt
 }
 
-# Bind the callback
+# Register the zle keymap select function
 zle -N zle-keymap-select
 
 # Reduce latency when pressing <Esc>
