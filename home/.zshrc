@@ -20,7 +20,8 @@
 #     /'\_   _/`\
 #     \___)=(___/
 
-# note filget fonts used are nancyj and "Calvin S"
+# note: filget fonts used are nancyj and "Calvin S"
+# note: use Meslo nerd font or some other
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -80,9 +81,10 @@ bindkey "^I" expand-or-complete-with-dots
 #  ┬ ┬┬┌─┐┌┬┐┌─┐┬─┐┬ ┬
 #  ├─┤│└─┐ │ │ │├┬┘└┬┘
 #  ┴ ┴┴└─┘ ┴ └─┘┴└─ ┴
-HISTFILE=~/.config/zsh/zhistory
-HISTSIZE=5000
-SAVEHIST=5000
+#  folder must exist
+HISTFILE=~/history/zhistory
+HISTSIZE=500000
+SAVEHIST=500000
 HISTDUP=erase
 setopt appendhistory
 setopt sharehistory
@@ -91,6 +93,7 @@ setopt hist_ignore_all_dups
 setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
+setopt INC_APPEND_HISTORY
 
 #  ┌─┐┌─┐┬ ┬  ┌─┐┌─┐┌─┐┬    ┌─┐┌─┐┌┬┐┬┌─┐┌┐┌┌─┐
 #  ┌─┘└─┐├─┤  │  │ ││ ││    │ │├─┘ │ ││ ││││└─┐
@@ -236,7 +239,9 @@ preexec () {
 }
 
 precmd () {
-    # Proceed only if we've run a command in the current shell.
+# Call necessary for git branch to be shown
+    vcs_info
+# Proceed only if we've run a command in the current shell.
     if ! [[ -z $CMD_START_DATE ]] && ! check_command_prefix "$CMD_NAME"; then
         # Note current date in unix time
         CMD_END_DATE=$(date +%s)
