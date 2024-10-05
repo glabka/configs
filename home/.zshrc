@@ -40,6 +40,32 @@ if [ -d "$HOME/.local/bin" ] ;
   then PATH="$HOME/.local/bin:$PATH"
 fi
 
+# ┌┬┐┬ ┬┌─┐┌┬┐┌─┐┌─┐
+#  │ ├─┤├┤ │││├┤ └─┐
+#  ┴ ┴ ┴└─┘┴ ┴└─┘└─┘
+FILE="$HOME/.config/themes/themes.sh"
+if [ -f "$FILE" ]; then
+    "$FILE"
+else
+    BAT_THEME="base16"
+fi
+
+# Catppuccin Colors
+export CATPPUCCIN_FLAVOUR="macchiato"  # Set your desired flavor
+source "$HOME/.config/themes/colors.sh"
+
+# Default colors based on Catppuccin theme
+COLOR_BACKGROUND="{${COLOR_BACKGROUND:-#F2D0D5}}"
+COLOR_MANTLE="{${COLOR_MANTLE:-#BBAF92}}"
+COLOR_CRUST="{${COLOR_CRUST:-#A6D5E0}}"
+COLOR_ACCENT="{${COLOR_ACCENT:-#F5C2E7}}"
+COLOR_GREY="{${COLOR_GREY:-#A6A6A6}}"
+
+# Completion colors
+zstyle ':completion:*:warnings' format "%B%F${COLOR_CRUST}No matches for:%f %F${COLOR_MANTLE}%d%b"
+zstyle ':completion:*:descriptions' format '%F${COLOR_ACCENT}[-- %d --]%f'
+zstyle ':vcs_info:*' formats ' %B%s-[%F${COLOR_MANTLE}%f %F${COLOR_ACCENT}%b%f]-'
+
 #  ┬  ┌─┐┌─┐┌┬┐  ┌─┐┌┐┌┌─┐┬┌┐┌┌─┐
 #  │  │ │├─┤ ││  ├┤ ││││ ┬││││├┤
 #  ┴─┘└─┘┴ ┴─┴┘  └─┘┘└┘└─┘┴┘└┘└─┘
@@ -62,9 +88,6 @@ zstyle ':completion:*' matcher-list \
 		'm:{a-zA-Z}={A-Za-z}' \
 		'+r:|[._-]=* r:|=*' \
 		'+l:|=*'
-zstyle ':completion:*:warnings' format "%B%F{red}No matches for:%f %F{magenta}%d%b"
-zstyle ':completion:*:descriptions' format '%F{yellow}[-- %d --]%f'
-zstyle ':vcs_info:*' formats ' %B%s-[%F{magenta}%f %F{yellow}%b%f]-'
 
 #  ┬ ┬┌─┐┬┌┬┐┬┌┐┌┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
 #  │││├─┤│ │ │││││ ┬   │││ │ │ └─┐
@@ -116,7 +139,8 @@ function dir_icon {
   fi
 }
 #󰕈
-PS1="%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %B%F{grey}[0]%f%b%B%F{blue}%f%b"
+# Prompt setup
+PS1="%B%F${COLOR_BACKGROUND}󰕈%f%b  %B%F${COLOR_MANTLE}%n%f%b $(dir_icon)  %B%F${COLOR_CRUST}%~%f%b${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_BACKGROUND}%f%b"
 
 function update_prompt() {
     local exit_code=$?
@@ -124,10 +148,10 @@ function update_prompt() {
     if [[ $exit_code -eq 0 ]]; then
         exit_color="%F{green}"  # Green for zero exit code
     else
-        exit_color="%F{red}"    # Red for nonzero exit code
+        exit_color="%F${COLOR_CRUST}"    # Red for nonzero exit code
     fi
     export LAST_COMMAND_INDICATOR="${exit_color}[${exit_code}]"
-    export PS1="%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F{blue}%f%b"
+    export PS1="%B%F${COLOR_BACKGROUND}󰕈%f%b  %B%F${COLOR_MANTLE}%n%f%b $(dir_icon)  %B%F${COLOR_CRUST}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${COLOR_BACKGROUND}%f%b"
 }
 add-zsh-hook precmd update_prompt
 
@@ -151,48 +175,39 @@ alias ll='eza --icons=always --color=always -la'
 #   └┘ ┴┴ ┴  ┴ ┴└─┘─┴┘└─┘  └┴┘┴ ┴ ┴ ┴  ┴┘└┘─┴┘┴└─┘┴ ┴ ┴ └─┘┴└─
 bindkey -v
 ## By default, we have insert mode shown on right hand side
-export RPROMPT="%B%F{blue}[INSERT]%f%b%}"
 
+# RPROMPT setup for insert mode and vim mode
+export RPROMPT="%B%F${COLOR_BACKGROUND}[INSERT]%f%b%}"
 # And also a beam as the cursor
 echo -ne '\e[5 q'
 
-
 # Callback for vim mode change
-function zle-keymap-select () {
+function zle-keymap-select() {
     local exit_code=${LAST_COMMAND_EXIT_VAL}
     local mode_color="%F{white}"
-
-
     # Vim indicator: only supported in these terminals
     if [[ "$TERM" == "tmux-256color" || "$TERM" == "xterm-256color" || "$TERM" == "xterm-kitty" || "$TERM" == "screen-256color" ]]; then
         if [[ $KEYMAP == "vicmd" ]]; then
-            # Command mode
-            mode_color="%F{green}"  # Green for normal mode
-            export RPROMPT="%B${mode_color}[NORMAL]%f%b"
-
+            mode_color="${COLOR_BACKGROUND}"
+            export RPROMPT="%B%F${mode_color}[NORMAL]%f%b"
             # Set block cursor
             echo -ne '\e[1 q'
         else
-            # Insert mode
-            mode_color="%F{blue}"  # Blue for insert mode
-            export RPROMPT="%B${mode_color}[INSERT]%f%b"
-
+            mode_color="${COLOR_MANTLE}"
+            export RPROMPT="%B#F${mode_color}[INSERT]%f%b"
             # Set beam cursor
             echo -ne '\e[5 q'
         fi
     fi
-
     # Update PS1 with exit code and mode color
-    export PS1="%B%F{blue}󰕈%f%b  %B%F{magenta}%n%f%b $(dir_icon)  %B%F{red}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B${mode_color}%f%b"
+    export PS1="%B%F${COLOR_BACKGROUND}󰕈%f%b  %B%F${COLOR_MANTLE}%n%f%b $(dir_icon)  %B%F${COLOR_CRUST}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${mode_color}%f%b"
 
     zle reset-prompt
 }
-
-# Register the zle keymap select function
 zle -N zle-keymap-select
 
 # Reduce latency when pressing <Esc>
- export KEYTIMEOUT=1
+export KEYTIMEOUT=1
  
 #  ┌┬┐┬ ┬  ┌┐ ┬┌┐┌┌┬┐┬┌┐┌┌─┐┌─┐
 #  │││└┬┘  ├┴┐││││ │││││││ ┬└─┐
