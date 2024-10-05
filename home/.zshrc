@@ -43,6 +43,7 @@ fi
 # ┌┬┐┬ ┬┌─┐┌┬┐┌─┐┌─┐
 #  │ ├─┤├┤ │││├┤ └─┐
 #  ┴ ┴ ┴└─┘┴ ┴└─┘└─┘
+export CATPPUCCIN_FLAVOUR="macchiato"  # Set your desired flavor
 FILE="$HOME/.config/themes/themes.sh"
 if [ -f "$FILE" ]; then
     "$FILE"
@@ -51,17 +52,17 @@ else
 fi
 
 # Catppuccin Colors
-export CATPPUCCIN_FLAVOUR="macchiato"  # Set your desired flavor
 source "$HOME/.config/themes/colors.sh"
 
 # Default colors based on Catppuccin theme
-COLOR_BLUE="{${COLOR_BLUE:-{blue}}"
-COLOR_MAGENTA="{${COLOR_MAUVE:-{magenta}}"
-COLOR_RED="{${COLOR_RED:-{red}}"
-COLOR_YELLOW="{${COLOR_YELLOW:-{yellow}}"
-COLOR_GREY="{${COLOR_SURFACE_2:-{grey}}"
-COLOR_CYAN="{${COLOR_SAPPHIRE:-{cyan}}"
-COLOR_ORANGE="{${COLOR_PEACH:-{orange}}"
+COLOR_BLUE="{${COLOR_BLUE:-blue}}"
+COLOR_MAGENTA="{${COLOR_MAUVE:-magenta}}"
+COLOR_RED="{${COLOR_RED:-red}}"
+COLOR_YELLOW="{${COLOR_YELLOW:-yellow}}"
+COLOR_GREY="{${COLOR_SURFACE_2:-grey}}"
+COLOR_CYAN="{${COLOR_SAPPHIRE:-cyan}}"
+COLOR_ORANGE="{${COLOR_PEACH:-orange}}"
+COLOR_GREEN="{${COLOR_GREEN:-green}}"
 
 # Completion colors
 zstyle ':completion:*:warnings' format "%B%F${COLOR_RED}No matches for:%f %F${COLOR_MAGENTA}%d%b"
@@ -148,7 +149,7 @@ function update_prompt() {
     local exit_code=$?
     local exit_color
     if [[ $exit_code -eq 0 ]]; then
-        exit_color="%F{green}"  # Green for zero exit code
+        exit_color="%F${COLOR_GREEN}"  # Green for zero exit code
     else
         exit_color="%F${COLOR_RED}"    # Red for nonzero exit code
     fi
