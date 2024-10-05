@@ -55,16 +55,18 @@ export CATPPUCCIN_FLAVOUR="macchiato"  # Set your desired flavor
 source "$HOME/.config/themes/colors.sh"
 
 # Default colors based on Catppuccin theme
-COLOR_BACKGROUND="{${COLOR_BACKGROUND:-#F2D0D5}}"
-COLOR_MANTLE="{${COLOR_MANTLE:-#BBAF92}}"
-COLOR_CRUST="{${COLOR_CRUST:-#A6D5E0}}"
-COLOR_ACCENT="{${COLOR_ACCENT:-#F5C2E7}}"
-COLOR_GREY="{${COLOR_GREY:-#A6A6A6}}"
+COLOR_BLUE="{${COLOR_BLUE:-{blue}}"
+COLOR_MAGENTA="{${COLOR_MAUVE:-{magenta}}"
+COLOR_RED="{${COLOR_RED:-{red}}"
+COLOR_YELLOW="{${COLOR_YELLOW:-{yellow}}"
+COLOR_GREY="{${COLOR_SURFACE_2:-{grey}}"
+COLOR_CYAN="{${COLOR_SAPPHIRE:-{cyan}}"
+COLOR_ORANGE="{${COLOR_PEACH:-{orange}}"
 
 # Completion colors
-zstyle ':completion:*:warnings' format "%B%F${COLOR_CRUST}No matches for:%f %F${COLOR_MANTLE}%d%b"
-zstyle ':completion:*:descriptions' format '%F${COLOR_ACCENT}[-- %d --]%f'
-zstyle ':vcs_info:*' formats ' %B%s-[%F${COLOR_MANTLE}%f %F${COLOR_ACCENT}%b%f]-'
+zstyle ':completion:*:warnings' format "%B%F${COLOR_RED}No matches for:%f %F${COLOR_MAGENTA}%d%b"
+zstyle ':completion:*:descriptions' format '%F${COLOR_YELLOW}[-- %d --]%f'
+zstyle ':vcs_info:*' formats ' %B%s-[%F${COLOR_MAGENTA}%f %F${COLOR_YELLOW}%b%f]-'
 
 #  ┬  ┌─┐┌─┐┌┬┐  ┌─┐┌┐┌┌─┐┬┌┐┌┌─┐
 #  │  │ │├─┤ ││  ├┤ ││││ ┬││││├┤
@@ -133,14 +135,14 @@ setopt COMPLETE_IN_WORD    # Complete from both ends of a word.
 
 function dir_icon {
   if [[ "$PWD" == "$HOME" ]]; then
-    echo "%B%F{cyan}%f%b"
+    echo "%B%F${COLOR_CYAN}%f%b"
   else
-    echo "%B%F{cyan}%f%b"
+    echo "%B%F${COLOR_CYAN}%f%b"
   fi
 }
 #󰕈
 # Prompt setup
-PS1="%B%F${COLOR_BACKGROUND}󰕈%f%b  %B%F${COLOR_MANTLE}%n%f%b $(dir_icon)  %B%F${COLOR_CRUST}%~%f%b${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_BACKGROUND}%f%b"
+PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b%${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_MAGENTA}%f%b"
 
 function update_prompt() {
     local exit_code=$?
@@ -148,10 +150,10 @@ function update_prompt() {
     if [[ $exit_code -eq 0 ]]; then
         exit_color="%F{green}"  # Green for zero exit code
     else
-        exit_color="%F${COLOR_CRUST}"    # Red for nonzero exit code
+        exit_color="%F${COLOR_RED}"    # Red for nonzero exit code
     fi
     export LAST_COMMAND_INDICATOR="${exit_color}[${exit_code}]"
-    export PS1="%B%F${COLOR_BACKGROUND}󰕈%f%b  %B%F${COLOR_MANTLE}%n%f%b $(dir_icon)  %B%F${COLOR_CRUST}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${COLOR_BACKGROUND}%f%b"
+    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${COLOR_MAGENTA}%f%b"
 }
 add-zsh-hook precmd update_prompt
 
@@ -177,30 +179,31 @@ bindkey -v
 ## By default, we have insert mode shown on right hand side
 
 # RPROMPT setup for insert mode and vim mode
-export RPROMPT="%B%F${COLOR_BACKGROUND}[INSERT]%f%b%}"
+INSERT_COLOR="${COLOR_MAGENTA}"
+export RPROMPT="%B%F${INSERT_COLOR}[INSERT]%f%b%}"
 # And also a beam as the cursor
 echo -ne '\e[5 q'
 
 # Callback for vim mode change
 function zle-keymap-select() {
     local exit_code=${LAST_COMMAND_EXIT_VAL}
-    local mode_color="%F{white}"
     # Vim indicator: only supported in these terminals
+    mode_color=
     if [[ "$TERM" == "tmux-256color" || "$TERM" == "xterm-256color" || "$TERM" == "xterm-kitty" || "$TERM" == "screen-256color" ]]; then
         if [[ $KEYMAP == "vicmd" ]]; then
-            mode_color="${COLOR_BACKGROUND}"
+            mode_color="${COLOR_GREY}"
             export RPROMPT="%B%F${mode_color}[NORMAL]%f%b"
             # Set block cursor
             echo -ne '\e[1 q'
         else
-            mode_color="${COLOR_MANTLE}"
-            export RPROMPT="%B#F${mode_color}[INSERT]%f%b"
+            mode_color="${INSERT_COLOR}"
+            export RPROMPT="%B%F${mode_color}[INSERT]%f%b"
             # Set beam cursor
             echo -ne '\e[5 q'
         fi
     fi
     # Update PS1 with exit code and mode color
-    export PS1="%B%F${COLOR_BACKGROUND}󰕈%f%b  %B%F${COLOR_MANTLE}%n%f%b $(dir_icon)  %B%F${COLOR_CRUST}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${mode_color}%f%b"
+    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${mode_color}%f%b"
 
     zle reset-prompt
 }
@@ -213,8 +216,7 @@ export KEYTIMEOUT=1
 #  │││└┬┘  ├┴┐││││ │││││││ ┬└─┐
 #  ┴ ┴ ┴   └─┘┴┘└┘─┴┘┴┘└┘└─┘└─┘
 bindkey '^ ' autosuggest-accept
-#bindkey '^I' complete-word
-bindkey '^I'         menu-complete
+bindkey '^I' menu-complete
 bindkey "$terminfo[kcbt]" reverse-menu-complete
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
