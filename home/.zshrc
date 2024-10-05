@@ -20,8 +20,9 @@
 #     /'\_   _/`\
 #     \___)=(___/
 
-# note: filget fonts used are nancyj and "Calvin S"
-# note: use Meslo nerd font or some other
+# NOTE: filget fonts used are nancyj and "Calvin S"
+# NOTE: use Meslo nerd font or some other
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -29,6 +30,8 @@
 #  ┬  ┬┌─┐┬─┐┌─┐
 #  └┐┌┘├─┤├┬┘└─┐
 #   └┘ ┴ ┴┴└─└─┘
+#  (vars)
+
 export VISUAL="${EDITOR}"
 export EDITOR='geany'
 export BROWSER='firefox'
@@ -43,6 +46,8 @@ fi
 # ┌┬┐┬ ┬┌─┐┌┬┐┌─┐┌─┐
 #  │ ├─┤├┤ │││├┤ └─┐
 #  ┴ ┴ ┴└─┘┴ ┴└─┘└─┘
+#  (themes)
+
 export CATPPUCCIN_FLAVOUR="macchiato"  # Set your desired flavor
 FILE="$HOME/.config/themes/themes.sh"
 if [ -f "$FILE" ]; then
@@ -72,8 +77,11 @@ zstyle ':vcs_info:*' formats ' %B%s-[%F${COLOR_MAGENTA}%f %F${COLOR_YELLOW}%b
 #  ┬  ┌─┐┌─┐┌┬┐  ┌─┐┌┐┌┌─┐┬┌┐┌┌─┐
 #  │  │ │├─┤ ││  ├┤ ││││ ┬││││├┤
 #  ┴─┘└─┘┴ ┴─┴┘  └─┘┘└┘└─┘┴┘└┘└─┘
+#  (load engine)
+
 autoload -Uz compinit
 
+# NOTE: ~/.config/zsh direcotory must exist for this code to work
 for dump in ~/.config/zsh/zcompdump(N.mh+24); do
   compinit -d ~/.config/zsh/zcompdump
 done
@@ -95,6 +103,8 @@ zstyle ':completion:*' matcher-list \
 #  ┬ ┬┌─┐┬┌┬┐┬┌┐┌┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
 #  │││├─┤│ │ │││││ ┬   │││ │ │ └─┐
 #  └┴┘┴ ┴┴ ┴ ┴┘└┘└─┘  ─┴┘└─┘ ┴ └─┘
+#  (waiting dots)
+
 expand-or-complete-with-dots() {
   echo -n "\e[31m…\e[0m"
   zle expand-or-complete
@@ -106,6 +116,8 @@ bindkey "^I" expand-or-complete-with-dots
 #  ┬ ┬┬┌─┐┌┬┐┌─┐┬─┐┬ ┬
 #  ├─┤│└─┐ │ │ │├┬┘└┬┘
 #  ┴ ┴┴└─┘ ┴ └─┘┴└─ ┴
+#  (history)
+
 #  folder must exist
 HISTFILE=~/history/zhistory
 HISTSIZE=500000
@@ -123,6 +135,8 @@ setopt INC_APPEND_HISTORY
 #  ┌─┐┌─┐┬ ┬  ┌─┐┌─┐┌─┐┬    ┌─┐┌─┐┌┬┐┬┌─┐┌┐┌┌─┐
 #  ┌─┘└─┐├─┤  │  │ ││ ││    │ │├─┘ │ ││ ││││└─┐
 #  └─┘└─┘┴ ┴  └─┘└─┘└─┘┴─┘  └─┘┴   ┴ ┴└─┘┘└┘└─┘
+#  (zsh cool options)
+
 setopt AUTOCD              # change directory just by typing its name
 setopt PROMPT_SUBST        # enable command substitution in prompt
 setopt MENU_COMPLETE       # Automatically highlight first element of completion menu
@@ -133,6 +147,7 @@ setopt COMPLETE_IN_WORD    # Complete from both ends of a word.
 #  ┌┬┐┬ ┬┌─┐  ┌─┐┬─┐┌─┐┌┬┐┌─┐┌┬┐
 #   │ ├─┤├┤   ├─┘├┬┘│ ││││├─┘ │
 #   ┴ ┴ ┴└─┘  ┴  ┴└─└─┘┴ ┴┴   ┴
+#  (the prompt)
 
 function dir_icon {
   if [[ "$PWD" == "$HOME" ]]; then
@@ -161,12 +176,14 @@ add-zsh-hook precmd update_prompt
 #  ┌─┐┬  ┬ ┬┌─┐┬┌┐┌┌─┐
 #  ├─┘│  │ ││ ┬││││└─┐
 #  ┴  ┴─┘└─┘└─┘┴┘└┘└─┘
+#  (plugins)
 source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 #  ┌─┐┬  ┬┌─┐┌─┐
 #  ├─┤│  │├─┤└─┐
 #  ┴ ┴┴─┘┴┴ ┴└─┘
+#  (alias)
 alias bat="batcat --theme=base16"
 alias ls='ls --color'
 alias ls='eza --icons=always --color=always -a'
@@ -176,6 +193,7 @@ alias ll='eza --icons=always --color=always -la'
 #  ┬  ┬┬┌┬┐  ┌┬┐┌─┐┌┬┐┌─┐  ┬ ┬┬┌┬┐┬ ┬  ┬┌┐┌┌┬┐┬┌─┐┌─┐┌┬┐┌─┐┬─┐
 #  └┐┌┘││││  ││││ │ ││├┤   ││││ │ ├─┤  ││││ ││││  ├─┤ │ │ │├┬┘
 #   └┘ ┴┴ ┴  ┴ ┴└─┘─┴┘└─┘  └┴┘┴ ┴ ┴ ┴  ┴┘└┘─┴┘┴└─┘┴ ┴ ┴ └─┘┴└─
+#  (vim mode with indicator)
 bindkey -v
 ## By default, we have insert mode shown on right hand side
 
@@ -216,6 +234,7 @@ export KEYTIMEOUT=1
 #  ┌┬┐┬ ┬  ┌┐ ┬┌┐┌┌┬┐┬┌┐┌┌─┐┌─┐
 #  │││└┬┘  ├┴┐││││ │││││││ ┬└─┐
 #  ┴ ┴ ┴   └─┘┴┘└┘─┴┘┴┘└┘└─┘└─┘
+#  (my bindings)
 bindkey '^ ' autosuggest-accept
 bindkey '^I' menu-complete
 bindkey "$terminfo[kcbt]" reverse-menu-complete
@@ -228,6 +247,7 @@ bindkey '^R' history-incremental-search-backward
 #  ┌─┐─┐ ┬┌┬┐┬─┐┌─┐┌─┐┌┬┐
 #  ├┤ ┌┴┬┘ │ ├┬┘├─┤│   │
 #  └─┘┴ └─ ┴ ┴└─┴ ┴└─┘ ┴
+#  (extract)
 extract () {
    if [ -f $1 ] ; then
        case $1 in
@@ -252,11 +272,13 @@ extract () {
 #  ┌┬┐┌┬┐┬ ┬─┐ ┬
 #   │ ││││ │┌┴┬┘
 #   ┴ ┴ ┴└─┘┴ └─
+#   (tmux)
 [[ -z "$TMUX" ]] && exec tmux
 
 #  ┬  ┌─┐┌┐┌┌─┐  ┌─┐┌─┐┌┬┐┌┬┐┌─┐┌┐┌┌┬┐┌─┐  ┌┐ ┌─┐┌─┐┌─┐
 #  │  │ │││││ ┬  │  │ │││││││├─┤│││ ││└─┐  ├┴┐├┤ ├┤ ├─┘
 #  ┴─┘└─┘┘└┘└─┘  └─┘└─┘┴ ┴┴ ┴┴ ┴┘└┘─┴┘└─┘  └─┘└─┘└─┘┴
+#  (long commands beep)
 function check_command_prefix() {
     local input_string="$1"
     shift
