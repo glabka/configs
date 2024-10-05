@@ -1,31 +1,126 @@
 #!/bin/bash
-# Define color variables based on the Catppuccin theme
-case $CATPPUCCIN_FLAVOUR in
-  "macchiato")
-    export COLOR_BACKGROUND="#F2D0D5"  # Background color
-    export COLOR_MANTLE="#BBAF92"       # Mantle color (darker background)
-    export COLOR_CRUST="#A6D5E0"         # Crust color (darkest)
-    export COLOR_ACCENT="#F5C2E7"        # Accent color (highlights)
-    ;;
-  "frappe")
-    export COLOR_BACKGROUND="#D9E9B6"    # Background color
-    export COLOR_MANTLE="#7A7D7D"        # Mantle color
-    export COLOR_CRUST="#A8C4D9"         # Crust color
-    export COLOR_ACCENT="#F2B591"        # Accent color
-    ;;
+# Set colors based on the CATPPUCCIN_FLAVOUR environment variable
+case "$CATPPUCCIN_FLAVOUR" in
   "latte")
-    export COLOR_BACKGROUND="#D5C4A1"    # Background color
-    export COLOR_MANTLE="#7C7B7A"        # Mantle color
-    export COLOR_CRUST="#B5D4A2"         # Crust color
-    export COLOR_ACCENT="#E6B8D3"        # Accent color
+    # Latte Palette
+    export ROSEWATER="#dc8a78"
+    export FLAMINGO="#dd7878"
+    export PINK="#ea76cb"
+    export MAUVE="#8839ef"
+    export RED="#d20f39"
+    export MAROON="#e64553"
+    export PEACH="#fe640b"
+    export YELLOW="#df8e1d"
+    export GREEN="#40a02b"
+    export TEAL="#179299"
+    export SKY="#04a5e5"
+    export SAPPHIRE="#209fb5"
+    export BLUE="#1e66f5"
+    export LAVENDER="#7287fd"
+    export TEXT="#4c4f69"
+    export SUBTEXT_1="#5c5f77"
+    export SUBTEXT_0="#6c6f85"
+    export OVERLAY_2="#7c7f93"
+    export OVERLAY_1="#8c8fa1"
+    export OVERLAY_0="#9ca0b0"
+    export SURFACE_2="#acb0be"
+    export SURFACE_1="#bcc0cc"
+    export SURFACE_0="#ccd0da"
+    export BASE="#eff1f5"
+    export MANTLE="#e6e9ef"
+    export CRUST="#dce0e8"
     ;;
+    
+  "frappe")
+    # Frappé Palette
+    export ROSEWATER="#f2d5cf"
+    export FLAMINGO="#eebebe"
+    export PINK="#f4b8e4"
+    export MAUVE="#ca9ee6"
+    export RED="#e78284"
+    export MAROON="#ea999c"
+    export PEACH="#ef9f76"
+    export YELLOW="#e5c890"
+    export GREEN="#a6d189"
+    export TEAL="#81c8be"
+    export SKY="#99d1db"
+    export SAPPHIRE="#85c1dc"
+    export BLUE="#8caaee"
+    export LAVENDER="#babbf1"
+    export TEXT="#c6d0f5"
+    export SUBTEXT_1="#b5bfe2"
+    export SUBTEXT_0="#a5adce"
+    export OVERLAY_2="#949cbb"
+    export OVERLAY_1="#838ba7"
+    export OVERLAY_0="#737994"
+    export SURFACE_2="#626880"
+    export SURFACE_1="#51576d"
+    export SURFACE_0="#414559"
+    export BASE="#303446"
+    export MANTLE="#292c3c"
+    export CRUST="#232634"
+    ;;
+    
+  "macchiato")
+    # Macchiato Palette
+    export ROSEWATER="#f4dbd6"
+    export FLAMINGO="#f0c6c6"
+    export PINK="#f5bde6"
+    export MAUVE="#c6a0f6"
+    export RED="#ed8796"
+    export MAROON="#ee99a0"
+    export PEACH="#f5a97f"
+    export YELLOW="#eed49f"
+    export GREEN="#a6da95"
+    export TEAL="#8bd5ca"
+    export SKY="#91d7e3"
+    export SAPPHIRE="#7dc4e4"
+    export BLUE="#8aadf4"
+    export LAVENDER="#b7bdf8"
+    export TEXT="#cad3f5"
+    export SUBTEXT_1="#b8c0e0"
+    export SUBTEXT_0="#a5adcb"
+    export OVERLAY_2="#939ab7"
+    export OVERLAY_1="#8087a2"
+    export OVERLAY_0="#6e738d"
+    export SURFACE_2="#5b6078"
+    export SURFACE_1="#494d64"
+    export SURFACE_0="#363a4f"
+    export BASE="#24273a"
+    export MANTLE="#1e2030"
+    export CRUST="#181926"
+    ;;
+    
   "mocha")
-    export COLOR_BACKGROUND="#B4D2E4"    # Background color
-    export COLOR_MANTLE="#C1C6A5"        # Mantle color
-    export COLOR_CRUST="#F4A4B8"          # Crust color
-    export COLOR_ACCENT="#A0A9B4"         # Accent color
+    # Mocha Palette
+    export ROSEWATER="#f5e0dc"
+    export FLAMINGO="#f2cdcd"
+    export PINK="#f5c2e7"
+    export MAUVE="#cba6f7"
+    export RED="#f38ba8"
+    export MAROON="#eba0ac"
+    export PEACH="#fab387"
+    export YELLOW="#f9e2af"
+    export GREEN="#a6e3a1"
+    export TEAL="#94e2d5"
+    export SKY="#89dceb"
+    export SAPPHIRE="#74c7ec"
+    export BLUE="#89b4fa"
+    export LAVENDER="#b4befe"
+    export TEXT="#cdd6f4"
+    export SUBTEXT_1="#bac2de"
+    export SUBTEXT_0="#a6adc8"
+    export OVERLAY_2="#9399b2"
+    export OVERLAY_1="#7f849c"
+    export OVERLAY_0="#6c7086"
+    export SURFACE_2="#585b70"
+    export SURFACE_1="#45475a"
+    export SURFACE_0="#313244"
+    export BASE="#1e1e2e"
+    export MANTLE="#181825"
+    export CRUST="#11111b"
     ;;
+
   *)
-    echo "Unknown Catppuccin flavor"
     ;;
 esac
