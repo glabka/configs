@@ -49,15 +49,10 @@ fi
 #  (themes)
 
 export CATPPUCCIN_FLAVOUR="macchiato"  # Set your desired flavor
-FILE="$HOME/.config/themes/themes.sh"
-if [ -f "$FILE" ]; then
-    "$FILE"
-else
-    BAT_THEME="base16"
-fi
 
 # Catppuccin Colors
 if [ -f "$HOME/.config/themes/colors.sh" ]; then
+    # NOTE: use chmod 700 on this file for security
     source "$HOME/.config/themes/colors.sh"
 fi
 
@@ -86,13 +81,14 @@ autoload -Uz compinit
 # NOTE: ~/.config/zsh direcotory must exist for this code to work
 for dump in ~/.config/zsh/zcompdump(N.mh+24); do
   compinit -d ~/.config/zsh/zcompdump
+  # chmod for security messure
+  chmod 600 ~/.config/zsh/zcompdump
 done
 
 compinit -C -d ~/.config/zsh/zcompdump
 
 autoload -Uz add-zsh-hook
 autoload -Uz vcs_info
-_comp_options+=(globdots)
 
 zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:*:*:*' menu select
@@ -101,6 +97,7 @@ zstyle ':completion:*' matcher-list \
 		'm:{a-zA-Z}={A-Za-z}' \
 		'+r:|[._-]=* r:|=*' \
 		'+l:|=*'
+_comp_options+=(globdots)
 
 #  ┬ ┬┌─┐┬┌┬┐┬┌┐┌┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
 #  │││├─┤│ │ │││││ ┬   │││ │ │ └─┐
@@ -120,7 +117,7 @@ bindkey "^I" expand-or-complete-with-dots
 #  ┴ ┴┴└─┘ ┴ └─┘┴└─ ┴
 #  (history)
 
-#  folder must exist
+#  directory must exist (NOTE: use chmod 600 for security)
 HISTFILE=~/history/zhistory
 HISTSIZE=500000
 SAVEHIST=500000
@@ -275,7 +272,7 @@ extract () {
            *.tar.bz2)   tar xvjf $1    ;;
            *.tar.gz)    tar xvzf $1    ;;
            *.bz2)       bunzip2 $1     ;;
-           *.rar)       unrar x $1       ;;
+           *.rar)       unrar x $1     ;;
            *.gz)        gunzip $1      ;;
            *.tar)       tar xvf $1     ;;
            *.tbz2)      tar xvjf $1    ;;
