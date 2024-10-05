@@ -37,7 +37,7 @@ export EDITOR='geany'
 export BROWSER='firefox'
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
 export SUDO_PROMPT="Deploying root access for %u. Password pls: "
-export BAT_THEME="base16"
+local char_arrow="›"   #Unicode: \u203a
 
 if [ -d "$HOME/.local/bin" ] ;
   then PATH="$HOME/.local/bin:$PATH"
@@ -67,9 +67,17 @@ COLOR_ORANGE="{${COLOR_PEACH:-orange}}"
 COLOR_GREEN="{${COLOR_GREEN:-green}}"
 
 # Completion colors
+local completion_descriptions="%B%F{85} ${char_arrow} %f%%F{COLOR_GREEN}%d%b%f"
+local completion_warnings="%F{COLOR_yellow} ${char_arrow} %fno matches for %F{COLOR_GREEN}%d%f"
+local completion_error="%B%F{COLOR_RED} ${char_arrow} %f%e %d error"
+
 zstyle ':completion:*:warnings' format "%B%F${COLOR_RED}No matches for:%f %F${COLOR_MAGENTA}%d%b"
 zstyle ':completion:*:descriptions' format '%F${COLOR_YELLOW}[-- %d --]%f'
 zstyle ':vcs_info:*' formats ' %B%s-[%F${COLOR_MAGENTA}%f %F${COLOR_YELLOW}%b%f]-'
+
+# some other nice colors
+LS_COLORS=$LS_COLORS:"di=36":"ln=30;45":"so=34:pi=33":"ex=35":"bd=34;46":"cd=34;43":"su=30;41":"sg=30;46":"ow=30;43":"tw=30;42":"*.js=0;33":"*.json=33":"*.jsx=38;5;117":"*.ts=38;5;75":"*.css=38;5;27":"*.scss=38;5;169"
+export LS_COLORS
 
 #  ┬  ┌─┐┌─┐┌┬┐  ┌─┐┌┐┌┌─┐┬┌┐┌┌─┐
 #  │  │ │├─┤ ││  ├┤ ││││ ┬││││├┤
@@ -90,13 +98,17 @@ compinit -C -d ~/.config/zsh/zcompdump
 autoload -Uz add-zsh-hook
 autoload -Uz vcs_info
 
+zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS} "ma=189;5;255;48;5;24"
+
 zstyle ':completion:*' verbose true
-zstyle ':completion:*:*:*:*:*' menu select
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} 'ma=48;5;197;1'
+zstyle ':completion:*:*:*:*:*' menu select format $completion_descriptions
+zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS} "ma=38;5;253;48;5;23"
 zstyle ':completion:*' matcher-list \
 		'm:{a-zA-Z}={A-Za-z}' \
 		'+r:|[._-]=* r:|=*' \
 		'+l:|=*'
+zstyle ':completion:*:*:*:*:corrections' format $completion_error
+
 _comp_options+=(globdots)
 
 #  ┬ ┬┌─┐┬┌┬┐┬┌┐┌┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
@@ -110,7 +122,6 @@ expand-or-complete-with-dots() {
   zle redisplay
 }
 zle -N expand-or-complete-with-dots
-bindkey "^I" expand-or-complete-with-dots
 
 #  ┬ ┬┬┌─┐┌┬┐┌─┐┬─┐┬ ┬
 #  ├─┤│└─┐ │ │ │├┬┘└┬┘
@@ -155,6 +166,7 @@ function dir_icon {
     echo "%B%F${COLOR_CYAN}%f%b"
   fi
 }
+
 #󰕈
 # Prompt setup
 PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b%${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_MAGENTA}%f%b"
