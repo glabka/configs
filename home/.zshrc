@@ -57,7 +57,9 @@ else
 fi
 
 # Catppuccin Colors
-source "$HOME/.config/themes/colors.sh"
+if [ -f "$HOME/.config/themes/colors.sh" ]; then
+    source "$HOME/.config/themes/colors.sh"
+fi
 
 # Default colors based on Catppuccin theme
 COLOR_BLUE="{${COLOR_BLUE:-blue}}"
@@ -177,14 +179,33 @@ add-zsh-hook precmd update_prompt
 #  ├─┘│  │ ││ ┬││││└─┐
 #  ┴  ┴─┘└─┘└─┘┴┘└┘└─┘
 #  (plugins)
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# NOTE: install plugins for them to work
+if [ -f "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+    source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+if [ -f "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 #  ┌─┐┬  ┬┌─┐┌─┐
 #  ├─┤│  │├─┤└─┐
 #  ┴ ┴┴─┘┴┴ ┴└─┘
 #  (alias)
-alias bat="batcat --theme=base16"
+
+# On some system bat is called batcat
+if command -v bat >/dev/null 2>&1; then
+    BAT=bat
+elif command -v batcat >/dev/null 2>&1; then
+    BAT=batcat
+fi
+flavor_capital_letter=$(echo "$CATPPUCCIN_FLAVOUR" | sed 's/.*/\u&/')
+
+if $BAT --list-themes | grep -q "Catppuccin"; then
+    alias bat="$BAT --theme=\"Catppuccin $flavor_capital_letter\""
+else
+    alias bat="$BAT --theme=base16"
+fi
 alias ls='ls --color'
 alias ls='eza --icons=always --color=always -a'
 alias ll='eza --icons=always --color=always -la'
