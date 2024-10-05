@@ -225,10 +225,13 @@ alias ll='eza --icons=always --color=always -la'
 #   └┘ ┴┴ ┴  ┴ ┴└─┘─┴┘└─┘  └┴┘┴ ┴ ┴ ┴  ┴┘└┘─┴┘┴└─┘┴ ┴ ┴ └─┘┴└─
 #  (vim mode with indicator)
 bindkey -v
-## By default, we have insert mode shown on right hand side
+# re-enabling backspace again
+bindkey "^H" backward-delete-char
+bindkey "^?" backward-delete-char
 
 # RPROMPT setup for insert mode and vim mode
 INSERT_COLOR="${COLOR_MAGENTA}"
+# By default, we have insert mode shown on right hand side
 export RPROMPT="%B%F${INSERT_COLOR}[INSERT]%f%b%}"
 # And also a beam as the cursor
 echo -ne '\e[5 q'
@@ -330,6 +333,7 @@ preexec () {
     CMD_NAME=$1
 }
 
+CMD_NOTIFY_THRESHOLD=${CMD_NOTIFY_THRESHOLD:-60}  # Default to 60 seconds if not set
 precmd () {
 # Call necessary for git branch to be shown
     vcs_info
@@ -340,7 +344,6 @@ precmd () {
         # Store the difference between the last command start date vs. current date.
         CMD_ELAPSED_TIME=$(($CMD_END_DATE - $CMD_START_DATE))
         # Store an arbitrary threshold, in seconds.
-        CMD_NOTIFY_THRESHOLD=60
 
         if [[ $CMD_ELAPSED_TIME -gt $CMD_NOTIFY_THRESHOLD ]]; then
             # Beep or visual bell if the elapsed time (in seconds) is greater than threshold
