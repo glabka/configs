@@ -227,7 +227,6 @@ alias ll='eza --icons=always --color=always -la'
 bindkey -v
 # re-enabling backspace again
 bindkey "^H" backward-delete-char
-bindkey "^?" backward-delete-char
 
 # RPROMPT setup for insert mode and vim mode
 INSERT_COLOR="${COLOR_MAGENTA}"
@@ -276,6 +275,18 @@ bindkey "^[[1;5D" backward-word
 bindkey '^H' backward-kill-word
 bindkey '5~' kill-word
 bindkey '^R' history-incremental-search-backward
+
+# backspace to undo last autocompletion otherwise delete char
+.zle_backspace-or-undo () {
+  if [[ $LASTWIDGET == *complet* ]] {
+    zle .undo
+  } else {
+    zle .backward-delete-char
+  }
+}
+
+zle -N .zle_backspace-or-undo
+bindkey '^?' .zle_backspace-or-undo
 
 #  ┌─┐─┐ ┬┌┬┐┬─┐┌─┐┌─┐┌┬┐
 #  ├┤ ┌┴┬┘ │ ├┬┘├─┤│   │
