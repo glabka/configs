@@ -317,8 +317,10 @@ extract () {
 #   │ ││││ │┌┴┬┘
 #   ┴ ┴ ┴└─┘┴ └─
 #   (tmux)
-[[ -z "$TMUX" ]] && exec tmux
-
+if [ -t 1 ]; then
+    # runs comman below if shell is interactive
+    command -v tmux &> /dev/null && [ -z "$TMUX" ] && (tmux attach || tmux new)
+fi
 #  ┬  ┌─┐┌┐┌┌─┐  ┌─┐┌─┐┌┬┐┌┬┐┌─┐┌┐┌┌┬┐┌─┐  ┌┐ ┌─┐┌─┐┌─┐
 #  │  │ │││││ ┬  │  │ │││││││├─┤│││ ││└─┐  ├┴┐├┤ ├┤ ├─┘
 #  ┴─┘└─┘┘└┘└─┘  └─┘└─┘┴ ┴┴ ┴┴ ┴┘└┘─┴┘└─┘  └─┘└─┘└─┘┴
@@ -364,4 +366,5 @@ precmd () {
         fi
     fi
 }
+
 
