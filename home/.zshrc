@@ -172,7 +172,7 @@ function dir_icon {
 
 #󰕈
 # Prompt setup
-PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b%${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_MAGENTA}%f%b"
+PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n@%m%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b%${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_MAGENTA}%f%b"
 
 function update_prompt() {
     local exit_code=$?
@@ -183,7 +183,7 @@ function update_prompt() {
         exit_color="%F${COLOR_RED}"    # Red for nonzero exit code
     fi
     export LAST_COMMAND_INDICATOR="${exit_color}[${exit_code}]"
-    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${COLOR_MAGENTA}%f%b"
+    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n@%m%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${COLOR_MAGENTA}%f%b"
 }
 add-zsh-hook precmd update_prompt
 
@@ -211,17 +211,19 @@ if command -v bat >/dev/null 2>&1; then
 elif command -v batcat >/dev/null 2>&1; then
     BAT=batcat
 fi
+
 flavor_capital_letter=$(echo "$CATPPUCCIN_FLAVOUR" | sed 's/.*/\u&/')
 
-if $BAT --list-themes | grep -q "Catppuccin"; then
+if [ "$BAT" ] && $BAT --list-themes | grep -q "Catppuccin"; then
     alias bat="$BAT --theme=\"Catppuccin $flavor_capital_letter\""
-else
+elif [ "$BAT" ]; then
     alias bat="$BAT --theme=base16"
 fi
 alias ls='ls --color'
-alias ls='eza --icons=always --color=always -a'
-alias ll='eza --icons=always --color=always -la'
-
+if command -v eza > /dev/null 2>&1; then
+    alias ls='eza --icons=always --color=always -a'
+    alias ll='eza --icons=always --color=always -la'
+fi
 
 #  ┬  ┬┬┌┬┐  ┌┬┐┌─┐┌┬┐┌─┐  ┬ ┬┬┌┬┐┬ ┬  ┬┌┐┌┌┬┐┬┌─┐┌─┐┌┬┐┌─┐┬─┐
 #  └┐┌┘││││  ││││ │ ││├┤   ││││ │ ├─┤  ││││ ││││  ├─┤ │ │ │├┬┘
@@ -257,7 +259,7 @@ function zle-keymap-select() {
         fi
     fi
     # Update PS1 with exit code and mode color
-    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${mode_color}%f%b"
+    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n@%m%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${mode_color}%f%b"
 
     zle reset-prompt
 }
@@ -331,7 +333,7 @@ fi
 function check_command_prefix() {
     local input_string="$1"
     shift
-    local ignored_commands=("nvim" "vim" "vi" "ssh" "intellij-idea" "firefox")
+    local ignored_commands=("nvim" "vim" "vi" "ssh" "intellij-idea" "firefox" "distrobox" "podman" "docker")
 
     for cmd in "${ignored_commands[@]}"; do
         if [[ "$input_string" == "$cmd "* || "$input_string" == "$cmd" ]]; then
@@ -369,5 +371,4 @@ precmd () {
         fi
     fi
 }
-
 
