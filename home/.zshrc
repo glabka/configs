@@ -1,3 +1,10 @@
+# Enable Powerlevel9k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # __________________________________________________
 #/                                                  \
 #|                       dP                         |
@@ -32,11 +39,15 @@
 #   └┘ ┴ ┴┴└─└─┘
 #  (vars)
 
+export DOCKER_HOST=unix:///var/run/docker.sock
 export VISUAL="${EDITOR}"
-export EDITOR='geany'
+export EDITOR='vim'
 export BROWSER='firefox'
 export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
 export SUDO_PROMPT="Deploying root access for %u. Password pls: "
+export CUDA_HOME=/opt/cuda
+export PATH=$CUDA_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 if command -v nvim &> /dev/null ; then
     export MANPAGER='nvim +Man!'
 fi
@@ -76,7 +87,7 @@ local completion_error="%B%F{COLOR_RED} ${char_arrow} %f%e %d error"
 
 zstyle ':completion:*:warnings' format "%B%F${COLOR_RED}No matches for:%f %F${COLOR_MAGENTA}%d%b"
 zstyle ':completion:*:descriptions' format '%F${COLOR_YELLOW}[-- %d --]%f'
-zstyle ':vcs_info:*' formats ' %B%s-[%F${COLOR_MAGENTA}%f %F${COLOR_YELLOW}%b%f]-'
+zstyle ':vcs_info:*' formats ' %B%F${COLOR_MAGENTA}�%f%b'
 
 # some other nice colors
 LS_COLORS=$LS_COLORS:"di=36":"ln=30;45":"so=34:pi=33":"ex=35":"bd=34;46":"cd=34;43":"su=30;41":"sg=30;46":"ow=30;43":"tw=30;42":"*.js=0;33":"*.json=33":"*.jsx=38;5;117":"*.ts=38;5;75":"*.css=38;5;27":"*.scss=38;5;169"
@@ -113,6 +124,11 @@ zstyle ':completion:*' matcher-list \
 zstyle ':completion:*:*:*:*:corrections' format $completion_error
 
 _comp_options+=(globdots)
+
+# Carape completion
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
+zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+source <(carapace _carapace)
 
 #  ┬ ┬┌─┐┬┌┬┐┬┌┐┌┌─┐  ┌┬┐┌─┐┌┬┐┌─┐
 #  │││├─┤│ │ │││││ ┬   │││ │ │ └─┐
@@ -171,21 +187,6 @@ function dir_icon {
 }
 
 #󰕈
-# Prompt setup
-PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n@%m%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b%${vcs_info_msg_0_} %B%F${COLOR_GREY}[0]%f%b%B%F${COLOR_MAGENTA}%f%b"
-
-function update_prompt() {
-    local exit_code=$?
-    local exit_color
-    if [[ $exit_code -eq 0 ]]; then
-        exit_color="%F${COLOR_GREEN}"  # Green for zero exit code
-    else
-        exit_color="%F${COLOR_RED}"    # Red for nonzero exit code
-    fi
-    export LAST_COMMAND_INDICATOR="${exit_color}[${exit_code}]"
-    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n@%m%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${COLOR_MAGENTA}%f%b"
-}
-add-zsh-hook precmd update_prompt
 
 #  ┌─┐┬  ┬ ┬┌─┐┬┌┐┌┌─┐
 #  ├─┘│  │ ││ ┬││││└─┐
@@ -198,6 +199,9 @@ if [ -f "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
 fi
 if [ -f "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
     source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+if [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 #  ┌─┐┬  ┬┌─┐┌─┐
@@ -239,31 +243,6 @@ INSERT_COLOR="${COLOR_MAGENTA}"
 export RPROMPT="%B%F${INSERT_COLOR}[INSERT]%f%b%}"
 # And also a beam as the cursor
 echo -ne '\e[5 q'
-
-# Callback for vim mode change
-function zle-keymap-select() {
-    local exit_code=${LAST_COMMAND_EXIT_VAL}
-    # Vim indicator: only supported in these terminals
-    mode_color=
-    if [[ "$TERM" == "tmux-256color" || "$TERM" == "xterm-256color" || "$TERM" == "xterm-kitty" || "$TERM" == "screen-256color" ]]; then
-        if [[ $KEYMAP == "vicmd" ]]; then
-            mode_color="${COLOR_GREY}"
-            export RPROMPT="%B%F${mode_color}[NORMAL]%f%b"
-            # Set block cursor
-            echo -ne '\e[1 q'
-        else
-            mode_color="${INSERT_COLOR}"
-            export RPROMPT="%B%F${mode_color}[INSERT]%f%b"
-            # Set beam cursor
-            echo -ne '\e[5 q'
-        fi
-    fi
-    # Update PS1 with exit code and mode color
-    export PS1="%B%F${COLOR_BLUE}󰕈%f%b  %B%F${COLOR_MAGENTA}%n@%m%f%b $(dir_icon)  %B%F${COLOR_RED}%~%f%b${vcs_info_msg_0_} %B${LAST_COMMAND_INDICATOR}%f%b%B%F${mode_color}%f%b"
-
-    zle reset-prompt
-}
-zle -N zle-keymap-select
 
 # Reduce latency when pressing <Esc>
 export KEYTIMEOUT=1
@@ -318,14 +297,6 @@ extract () {
    fi
  }
  
-#  ┌┬┐┌┬┐┬ ┬─┐ ┬
-#   │ ││││ │┌┴┬┘
-#   ┴ ┴ ┴└─┘┴ └─
-#   (tmux)
-if [ -t 1 ]; then
-    # runs comman below if shell is interactive
-    command -v tmux &> /dev/null && [ -z "$TMUX" ] && (tmux attach || tmux new)
-fi
 #  ┬  ┌─┐┌┐┌┌─┐  ┌─┐┌─┐┌┬┐┌┬┐┌─┐┌┐┌┌┬┐┌─┐  ┌┐ ┌─┐┌─┐┌─┐
 #  │  │ │││││ ┬  │  │ │││││││├─┤│││ ││└─┐  ├┴┐├┤ ├┤ ├─┘
 #  ┴─┘└─┘┘└┘└─┘  └─┘└─┘┴ ┴┴ ┴┴ ┴┘└┘─┴┘└─┘  └─┘└─┘└─┘┴
@@ -372,3 +343,16 @@ precmd () {
     fi
 }
 
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+#  ┌┬┐┌┬┐┬ ┬─┐ ┬
+#   │ ││││ │┌┴┬┘
+#   ┴ ┴ ┴└─┘┴ └─
+#   (tmux)
+if [ -t 1 ]; then
+    # runs comman below if shell is interactive
+    command -v tmux &> /dev/null && [ -z "$TMUX" ] && (tmux attach || tmux new)
+fi
