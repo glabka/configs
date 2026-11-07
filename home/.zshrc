@@ -1,10 +1,3 @@
-# Enable Powerlevel9k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 # __________________________________________________
 #/                                                  \
 #|                       dP                         |
@@ -353,16 +346,65 @@ precmd () {
     fi
 }
 
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+command -v cbonsai &> /dev/null && cbonsai -p
+
+
+# 1. Cleanly prepend user bins WITHOUT breaking the original system paths
+export PATH="$HOME/.local/bin:$HOME/.atuin/bin:$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+if /usr/bin/which starship &> /dev/null || command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
+else
+    echo "Diagnostic: Starship binary could not be found anywhere in your PATH."
+fi
+
+# choosing screen saver basedon the week of the year
+(( week_modulo = ( $( date +%W ) % 4 ) + 1 ))
+
+## 1. Define the 4 target programs in order (1 to 4)
+readonly SCREEN_SAVERS_LIST=(
+    "cmatrix"
+    "pipes.sh"
+    "cbonsai"
+    "asciiquarium"
+)
+
+## 2. Get the selection argument ($1)
+local selection="$week_modulo"
+
+## 3. Handle selection based on input
+case "$selection" in
+    1|2|3|4|"")
+        local index=$(( selection ))
+        local target="${SCREEN_SAVERS_LIST[$index]}"
+        
+        # Check if the specifically chosen program exists
+        if (( $+commands[$target] )); then
+            export SCREEN_SAVER="$target"
+	else
+	## 4. Fallback Logic: Look for any available program from the list
+           for prog in "${SCREEN_SAVERS_LIST[@]}"; do
+               if (( $+commands[$prog] )); then
+                   # "Falling back to: $prog"
+                   export SCREEN_SAVER="$prog"
+               fi
+           done
+        fi
+        ;;
+        
+    *)
+        echo "Invalid choice '$selection' (must be 1-4). Searching for any available fallback..."
+        ;;
+esac
+
+
+
 
 #  ┌┬┐┌┬┐┬ ┬─┐ ┬
 #   │ ││││ │┌┴┬┘
 #   ┴ ┴ ┴└─┘┴ └─
 #   (tmux)
-if [ -t 1 ]; then
-    # runs comman below if shell is interactive
-    command -v tmux &> /dev/null && [ -z "$TMUX" ] && (tmux attach || tmux new)
+if [ -z "$TMUX" ]; then
+    tmux attach-session -t default || tmux new-session -s default
 fi
